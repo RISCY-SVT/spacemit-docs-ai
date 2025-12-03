@@ -16,7 +16,7 @@
   - [Qwen2.5](#qwen25)
 
 ## 基础模型
-- 推理引擎版本: spacemit-ort-2.0.1
+- 推理引擎版本： spacemit-ort-2.0.1
 - OS：bianbu-2.2
 - date：2025-11-18
 

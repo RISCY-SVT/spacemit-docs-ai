@@ -6,11 +6,11 @@
 
 本案例展示了语音模块与大模型无缝对接实现的AI聊天机器人。它能够进行逻辑清晰的多轮对话，通过深度理解自然语言，为用户提供信息、解答疑问。
 
-## 项目特点
+### 项目特点
 
-- **所用模型**: sensevoice、Deepseek R1、melotts
-- **语言支持**: 提供 Python 示例代码  
-- **提供功能**: 提供端到端语音输入、语音输出功能
+- **所用模型**：sensevoice、Deepseek R1、melotts
+- **语言支持**： 提供 Python 示例代码  
+- **提供功能**：提供端到端语音输入、语音输出功能
 
 [详细介绍](https://bianbu.spacemit.com/brdk/Robot_development/6.5_Robot_Application_Cases/6.5.3_large-language-model/ai-chat)
 
@@ -20,9 +20,9 @@
 
 ### 项目特点
 
-- **所用模型**: qwen2.5-0.5B、YOLOv8
-- **语言支持**: 提供 Python 示例代码  
-- **提供功能**: 提供语音控制、YOLOv8 目标识别、LLM 回调智能跟随功能
+- **所用模型**：qwen2.5-0.5B、YOLOv8
+- **语言支持**：提供 Python 示例代码  
+- **提供功能**：提供语音控制、YOLOv8 目标识别、LLM 回调智能跟随功能
 
 [详细介绍](https://bianbu.spacemit.com/brdk/Robot_development/6.5_Robot_Application_Cases/6.5.1_human-robot-interaction/agv-follow)
 
@@ -32,9 +32,9 @@
 
 ### 项目特点
 
-- **所用模型**: sensevoice、qwen2.5-0.5B、YOLOv8、Paddle OCR
-- **语言支持**: 提供 Python 示例代码  
-- **提供功能**: 提供语音控制、LLM回调、YOLOv8目标识别、文字识别功能
+- **所用模型**：sensevoice、qwen2.5-0.5B、YOLOv8、Paddle OCR
+- **语言支持**：提供 Python 示例代码  
+- **提供功能**：提供语音控制、LLM回调、YOLOv8目标识别、文字识别功能
 
 [详细介绍](https://bianbu.spacemit.com/brdk/Robot_development/6.5_Robot_Application_Cases/6.5.1_human-robot-interaction/smart-retail)
 
@@ -43,8 +43,8 @@
 
 ### 项目特点
 
-- **所用模型**: ACT、SmolVLA
-- **语言支持**: 提供 Python 示例代码  
-- **提供功能**: 提供数据抓取、模型训练和分布式部署功能  
+- **所用模型**：ACT、SmolVLA
+- **语言支持**：提供 Python 示例代码  
+- **提供功能**：提供数据抓取、模型训练和分布式部署功能  
 
 [详细介绍](https://bianbu.spacemit.com/brdk/Robot_development/6.4_Robot_Application_Module/6.4.4_AI_Robotic_Arm/lerobot)
