@@ -1,22 +1,18 @@
 # XSlim
 
-**XSlim** 是 **SpacemiT** 推出的 PTQ 量化工具，集成了已经调整好的适配芯片的量化策略，使用 Json 配置文件调用统一接口实现模型量化。同时开源于[github-xslim](https://github.com/spacemit-com/xslim)
+**XSlim** 是 **SpacemiT** 推出的 **后训练量化（Post-Training Quantization, PTQ）工具**，集成了针对目标芯片优化的量化策略，通过 JSON 配置文件调用统一接口实现模型量化。该工具已在 [GitHub-xslim](https://github.com/spacemit-com/xslim) 开源。
 
 
----
+## 快速开始
 
-- [QuickStart](#quickstart)
-- [量化参数配置](#量化参数配置)
-- [量化精度调优](#量化精度调优)
-- [ChangeLog](#changelog)
+- **安装**
 
-## QuickStart
-- Install
 ```
 pip install xslim
 ```
 
-- Python
+- **Python 调用示例**
+
 ``` python
 import xslim
 
@@ -24,12 +20,14 @@ demo_json = dict()
 # 以下缺省对demo_json内容的填入
 
 demo_json_path = "./demo_json.json"
-# 使用字典的方式
+
+# 方式一：使用字典的方式
 xslim.quantize_onnx_model(demo_json)
-# 使用json文件的方式
+
+# 方式二：使用json文件的方式
 xslim.quantize_onnx_model(demo_json_path)
 
-# 支持API调用时传入模型路径或模型Proto
+# 可选：支持 API 调用时传入模型路径或模型 Proto
 # xslim.quantize_onnx_model("resnet18.json", "/home/share/modelzoo/classification/resnet18/resnet18.onnx")
 
 # xslim.quantize_onnx_model(
@@ -41,23 +39,27 @@ xslim.quantize_onnx_model(demo_json_path)
 # quantized_onnx_model = xslim.quantize_onnx_model("resnet18.json", onnx_model)
 ```
 
-- Shell
-``` bash
+- **命令行调用示例**
+
+```bash
 python -m xslim --config ./demo_json.json
+
 # 指定输入以及输出模型路径
 python -m xslim -c ./demo_json.json -i demo.onnx -o demo.q.onnx
+
 # 使用动态量化，不需要json配置文件
 python -m xslim -i demo.onnx -o demo.q.onnx --dynq
+
 # 转为FP16，不需要json配置文件
 python -m xslim -i demo.onnx -o demo.q.onnx --fp16
+
 # 不量化仅模型精简，不需要json配置文件
 python -m xslim -i demo.onnx -o demo.q.onnx
 ```
 
----
-
 ## 量化参数配置
-- Json配置示例
+
+- **Json 配置示例**
 ```
 {
     "model_parameters" : {
@@ -116,29 +118,30 @@ python -m xslim -i demo.onnx -o demo.q.onnx
 }
 ```
 
-- 可以省略的字段
+- **可选字段说明**
 
 | 字段名 | 默认值 | 可选值 | 备注 |
 | --- | --- | --- | --- |
-| output_prefix | onnx_model的去后缀文件名，输出以.q.onnx结尾 | / |  |
-| working_dir | onnx_model所在的目录 | / |  |
-| calibration_step | 100 |  | 一般建议设置为100-1000范围 |
-| calibration_device | cuda | cuda、cpu | 系统自动检测 |
-| calibration_type | default | default、kl、minmax、percentile、mse | 推荐先使用default，而后是percentile或minmax |
-| input_name | 从onnx模型中读取 |  |  |
-| input_shape | 从onnx模型中读取 |  | 需要shape为全int，支持batch为符号，并默认填为1 |
-| dtype | 从onnx模型中读取<br> | float32、int8、uint8、int16<br> | - 当前仅支持float32 |
-| file_type | img | img、npy、raw | - 只支持读取与dtype一致的raw数据，即默认为float32 |
-| preprocess_file | None | PT_IMAGENET、IMAGENET | 系统预设了两种IMAGENET标准预处理 |
-| finetune_level | 1 | 0，1，2，3 | - 0，不进行任何激进的参数校准<br>- 1，可能进行一些静态量化参数校准<br>- 2+，将根据逐块量化的损失情况进行量化参数校准 |
-| precision_level<br> | 0 | 0、1、2、3、4<br> | - 0，为全int8量化，即使调优也限制在int8<br>- 1-2，只将部分算子量化为int8，可适用于一般Transformer模型<br>- 3，动态量化<br>- 4，FP16 |
-| max_percentile | 0.9999 |  | percentile量化时的截断范围，限制最小值为0.99 |
-| custom_setting | None |  |  |
-| truncate_var_names | [] |  | 只支持依据截断Tensor名，将计算图二分，并且将检查二分结果，否则报错 |
+| `output_prefix` | `onnx_model`的去后缀文件名，输出以`.q.onnx`结尾 | / |  |
+| `working_dir` | `onnx_model` 所在的目录 | / |  |
+| `calibration_step` | `100` |  | 一般建议设置为 `100`-`1000` 范围 |
+| `calibration_device` | cuda | `cuda`、`cpu` | 系统自动检测 |
+| `calibration_type` | default | `default`、`kl`、`minmax`、`percentile`、`mse` | 推荐先使用`default`，而后是`percentile`或`minmax` |
+| `input_name` | 从 ONNX 模型中读取 |  |  |
+| `input_shape` | 从 ONNX 模型中读取 |  | 需要 shape 为全 int，支持 batch 为符号，并默认填为`1` |
+| `dtype` | 从 onnx 模型中读取 | `float32`、`int8`、`uint8`、`int16` | 当前仅支持 `float32` |
+| `file_type` | `img` | `img`, `npy`, `raw` | 只支持读取与 `dtype` 一致的 raw 数据，即默认为`float32` |
+| `preprocess_file` | None | `PT_IMAGENET`, `IMAGENET` | 系统预设了两种 IMAGENET 标准预处理 |
+| `finetune_level` | `1` | `0`、`1`、`2`、`3` | - `0`：不进行任何激进的参数校准<br>- `1`：可能进行一些静态量化参数校准<br>- `2+`：将根据逐块量化的损失情况进行量化参数校准 |
+| `precision_level` | `0` | `0`、`1`、`2`、`3`、`4` | - `0`：为全 int8 量化，即使调优也限制在int8 <br>- `1`-`2`：只将部分算子量化为 int8，可适用于一般 Transformer 模型<br>- `3`：动态量化<br>- `4`：FP16 |
+| `max_percentile` | `0.9999` |  | percentile 量化时的截断范围，限制最小值为 `0.99` |
+| `custom_setting` | None |  |  |
+| `truncate_var_names` | [] |  | 只支持依据截断 Tensor 名，将计算图二分，并且将检查二分结果，否则报错 |
 
-- 校准数据列表文件的规则
+- **校准数据列表文件格式**
 
-img_list.txt每行表示一个校准数据文件路径，可以写相对于img_list.txt 所在目录的相对路径，也可以写绝对路径，如果模型是多输入的，请确保每个文件列表的顺序是对应的。
+`img_list.txt` 每行表示一个校准数据文件路径，（支持相对或绝对路径）。如果模型是多输入的，请确保每个文件列表的顺序是对应的。
+
 ```
 QuantZoo/Data/Imagenet/Calib/n01440764/ILSVRC2012_val_00002138.JPEG
 QuantZoo/Data/Imagenet/Calib/n01443537/ILSVRC2012_val_00000994.JPEG
@@ -148,10 +151,11 @@ QuantZoo/Data/Imagenet/Calib/n01494475/ILSVRC2012_val_00015545.JPEG
 QuantZoo/Data/Imagenet/Calib/n01496331/ILSVRC2012_val_00008640.JPEG
 ```
 
-- preprocess_file的规则
+- **`preprocess_file` 的规则**
 
-例如这是一个custom_preprocess.py脚本文件，则在配置文件中将preprocess_file设为custom_preprocess.py:preprocess_impl 指向具体py文件的具体方法，如果是多输入的情况，code差距不大的情况下，可以直接复用自己的预处理方法。
-``` python
+例如这是一个 `custom_preprocess.py` 脚本文件，则在配置文件中将 `preprocess_file` 设为`custom_preprocess.py:preprocess_impl` 指向具体 `py` 文件的具体方法，如果是多输入的情况，code 差距不大的情况下，可以直接复用自己的预处理方法。
+
+```python
 from typing import Sequence
 import torch
 import cv2
@@ -185,7 +189,9 @@ def preprocess_impl(path_list: Sequence[str], input_parametr: dict) -> torch.Ten
 ```
 
 ## 量化精度调优
+
 > TBD
 
-## ChangeLog
+## 更新日志
+
 详情参考[github-xslim-releases](https://github.com/spacemit-com/xslim/releases)

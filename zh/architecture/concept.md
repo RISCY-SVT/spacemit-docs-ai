@@ -5,7 +5,7 @@
 为了加速 AI 计算，芯片企业设计了多种专用处理器架构，如 GPGPU、NPU、TPU 等。这些专用处理器架构在执行调度代码及应用层代码时，需要主控 CPU 的配合，如下图所示。因此，通常需要构建复杂的异构调度系统来协调 CPU 和 XPU 的额外数据交互和同步。
 ![architect](./images/architect.webp)
 
-为了保证AI算力的通用性和易用性，进迭时空基于自身 CPU 核的研发能力，以标准 RISC-V 核为基础，创新性地在 CPU 内集成 TensorCore，以 RISC-V 指令集为统一的软硬件接口，驱动 Scalar 标量算力、Vector 向量算力和 Matrix AI 算力，支持软件和 AI 模型同时在 RISC-V AI 核上运行，并通过程序正常跳转实现软件和 AI 模型之间的事件和数据交互，进而完成整个 AI 应用执行。我们把这种以 RISC-V 指令集为统一的软硬件接口，驱动 Scalar 标量算力、Vector 向量算力和 Matrix AI 算力的技术，叫做 **同构融合技术**，这种具有 AI 算力的 CPU 称为 **AI CPU** 或者**智算核**。
+为了保证AI算力的通用性和易用性，进迭时空基于自身 CPU 核的研发能力，以标准 RISC-V 核为基础，创新性地在 CPU 内集成 TensorCore，以 RISC-V 指令集为统一的软硬件接口，驱动 Scalar 标量算力、Vector 向量算力和 Matrix AI 算力，支持软件和 AI 模型同时在 RISC-V AI 核上运行，并通过程序正常跳转实现软件和 AI 模型之间的事件和数据交互，进而完成整个 AI 应用执行。我们把这种以 RISC-V 指令集为统一的软硬件接口，驱动 Scalar 标量算力、Vector 向量算力和 Matrix AI 算力的技术，叫做 **同构融合技术**，这种具有 AI 算力的 CPU 称为 **AI CPU** 或者 **智算核**。
 
 **AI CPU** 保留了 CPU 编程模型，开发者使用 Linux 线程就可以驱动 AI 算力，在硬件层面上对 AI 算力和通用 CPU 进行了更高层次的封装，开发者无需关注异构调度和复杂的驱动管理；并且以 ***RISC-V*** CPU 为基础，可以便捷接入开源生态，保留开源软件的使用习惯；此外 **AI CPU** 兼具并行计算和逻辑计算能力，适配 MOE 模型推理。
 
@@ -22,7 +22,7 @@
 - **4 × A60** 智算核（AI CPU）
 
 在 **A60** 中，RISC-V Vector 的位宽为 256 位，其 matrix 及 vector 理论算力展示如下，可参考[算力换算方法](./instruction.md)。
-- Matrix 算力: 
+- Matrix 算力： 
   - 0.5 TOPS/Core (Int8), 2 TOPS/Cluster (Int8) 
 - Vector 算力：
   - 0.128 TOPS/Core (Int8), 0.5 TOPS/Cluster (Int8)
