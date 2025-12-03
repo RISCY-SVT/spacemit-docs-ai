@@ -1,3 +1,0 @@
-# Llama.cpp
-
-TBD
