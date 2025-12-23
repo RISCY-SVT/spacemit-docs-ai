@@ -9,7 +9,9 @@ sidebar_position: 2
 ## 4.2.1 指令集介绍
 
 matirx扩展指令主要用于AI中最重要的计算，矩阵乘法。矩阵乘法的一般形式为：
-$ C += A \times B $
+
+C+ = A x B
+
 其中，C为输出矩阵，A和B为输入矩阵。根据输入输出矩阵使用的寄存器不同，***RISC-V***社区把matirx扩展指令分为三个方案 ，如下图所示：![三个指令集对比](./images/matrix_inst.jpg)
 
 - IME方案，矩阵计算的输入、输出矩阵都使用vector寄存器，详情可以加入[IME subgroup](https://lists.riscv.org/g/tech-integrated-matrix-extension)查看。
@@ -19,9 +21,13 @@ $ C += A \times B $
 ## 4.2.2 进迭时空指令集
 
 进迭时空自定义的matirx扩展指令集，是IME的，[详情可见](https://github.com/spacemit-com/riscv-ime-extension-spec)。可以看到，K1（vlen=256）中的matrix计算单元形状是：
-$ 4 \times 8 \times 4 $，
+
+
+4 x 8 x 4
+
 则单个matrix计算单元的算力为：
-$ 2 \times 4 \times 8 \times 4 \times 2Ghz = 0.5TOPS $。
+
+2 x 4 x 8 x 4 x 2Ghz = 0.5TOPS
 
 ## 4.2.3 简单使用
 
