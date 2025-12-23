@@ -5,7 +5,8 @@ sidebar_position: 2
 ## 4.2.1 Instruction Set Overview
 
 The RISC-V Matrix Extension is designed to accelerate one of the most critical operations in AI workloads: matrix multiplication. The canonical form of this operation is:
-$ C += A \times B $
+
+C+ = A x B
 
 where:
 - **C** is the output matrix,
@@ -24,11 +25,11 @@ SpacemiT's custom matrix extension instruction set is based on the IME proposal.
 
 In the K1 core (with `vlen=256`), the matrix compute unit has a native tile shape of:  
 
-$ 4 \times 8 \times 4 $
+4 x 8 x 4
 
 Thus, the computational throughput per unit is:  
 
-$ 2 \times 4 \times 8 \times 4 \times 2Ghz = 0.5TOPS $
+2 x 4 x 8 x 4 x 2Ghz = 0.5TOPS
 
 ## 4.2.3 Basic Usage
 
