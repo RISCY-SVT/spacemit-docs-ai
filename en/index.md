@@ -1,7 +1,7 @@
-# AI 
+# AI
 
-- [简介](./intro/index.md)
+- [Introduction](./intro/index.md)
 - [Solution](./solutions/index.md)
 - [Application Software Stack](./application_tools/index.md)
-- [计算软件栈](./compute_stack/index.md)
-- [计算架构](./architecture/index.md)
+- [Compute Software Stack](./compute_stack/index.md)
+- [Compute Architecture](./architecture/index.md)

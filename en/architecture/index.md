@@ -1,6 +1,6 @@
 sidebar_position: 4
 
-# 计算架构
+# Compute Architecture
 
-- [设计理念](concept.md)
-- [Matrix 扩展指令集](instruction.md)
+- [Design Philosophy](concept.md)
+- [Matrix Extension Instruction Set](instruction.md)
