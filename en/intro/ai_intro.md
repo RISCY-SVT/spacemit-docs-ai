@@ -1,30 +1,32 @@
-# 简介
+sidebar_position: 1
 
-本文档介绍了进迭时空基于***RISC-V***指令集，自研的AI计算架构。以及基于此架构，构建的基础计算软件栈和应用开发工具。另外，我们还将展示公司基于这个软件平台研发的完整demo和标杆客户的行业落地方案。
+# Introduction
 
----
-
-## 文档结构
-
-- [第一章 解决方案](../solutions/index.md)
-- [第二章 应用软件栈](../application_tools/index.md)
-- [第三章 计算软件栈](../compute_stack/index.md)
-- [第四章 计算架构](../architecture/index.md)
+This document presents SpacemiT’s proprietary AI computing architecture, built upon the **RISC-V** instruction set architecture (ISA). It further outlines the foundational compute software stack and application development tools constructed on this hardware-software co-designed platform. Additionally, it showcase end-to-end demonstration applications and real-world industry deployments developed by SpacemiT and its strategic customers.
 
 ---
 
-## 第一章 解决方案
+## Document Structure
 
-本章系统梳理了面向【AI计算机/AI机器人/智能视觉/智能语音】等关键领域的全栈式AI解决方案，旨在清晰呈现各方案的技术路径与核心优势，助力客户基于自身需求进行高效评估与精准选型，从而加速智能产品的创新与落地进程。
- 
-- [AI 聊天机器人](../solutions/solution_list.md#ai-聊天机器人)  
-- [智能小车跟随](../solutions/solution_list.md#智能小车跟随)  
-- [机械臂智慧零售](../solutions/solution_list.md#机械臂智慧零售)  
-- [LeRobot 机械臂](../solutions/solution_list.md#lerobot机械臂)  
- 
-## 第二章 应用软件栈
+- [1. Solutions](../solutions/index.md)
+- [2. Application Software Stack](../application_tools/index.md)
+- [3. Compute Software Stack](../compute_stack/index.md)
+- [4. Compute Architecture](../architecture/index.md)
 
-本章旨在系统介绍AI应用软件栈，通过展示其集成流程，帮助开发者快速掌握应用部署落地的完整路径，显著降低开发门槛，提升创新效率，最终赋能多样化的端侧AI应用创新。
+---
+
+## 1. Solutions
+
+This section provides a comprehensive overview of SpacemiT’s full-stack AI solutions tailored for key verticals—including AI computing devices, AI-powered robotics, intelligent vision systems, and smart voice applications. Each solution is presented with its technical roadmap and core differentiators to help customers efficiently evaluate and select the optimal fit for their specific use cases—accelerating time-to-market for intelligent products.
+ 
+- [AI Chatbot](../solutions/solution_list.md#ai-chatbot)  
+- [Intelligent AGV Following Robot](../solutions/solution_list.md#intelligent-agv-following-robot)  
+- [Smart Retail Robotic Arm](../solutions/solution_list.md#smart-retail-robotic-arm)  
+- [LeRobot Robotic Arm](../solutions/solution_list.md#lerobot-robotic-arm)  
+ 
+## 2. Application Software Stack
+
+This section introduces SpacemiT’s AI application software stack, designed to streamline deployment and simplify development. By illustrating the integration workflow, we aim to lower the barrier to entry for developers and accelerate innovation across a wide range of edge AI applications.
 
 - [Ollama](https://bianbu.spacemit.com/ai/ollama)
 - [LocalAI](https://bianbu.spacemit.com/ai/localai)
@@ -32,17 +34,17 @@
 - [Node-RED](https://bianbu.spacemit.com/brdk/System_configuration/2.6_Docker_Usage/2.6.2_Node-RED_Usage)
 - [Demo Docker](https://bianbu.spacemit.com/brdk/System_configuration/2.6_Docker_Usage/2.6.4_DemoZoo_Usage)
 
-## 第三章 计算软件栈
+## 3. Compute Software Stack
 
-本章将介绍进迭时空在AI计算、计算机视觉、传统高性能计算领域的软件栈建设，为客户提供多层次的全栈计算优化解决方案，其中多数推理及算子库软件均同步于开源社区。
+This section details SpacemiT’s optimized software stack for AI inference, computer vision, and general-purpose high-performance computing (HPC). Our libraries deliver multi-layered, full-stack performance tuning—most of which are actively maintained and contributed back to open-source communities.
 
-- [AI计算软件栈](../compute_stack/ai_compute_stack.md)
-- [计算机视觉库](../compute_stack/cv_library.md)
-- [其他数学库](../compute_stack/math_library.md)
+- [AI Compute Software Stack](../compute_stack/ai_compute_stack.md)
+- [Computer Vision Libraries](../compute_stack/cv_library.md)
+- [Other Mathematical Libraries](../compute_stack/math_library.md)
 
-## 第四章 计算架构
+## 4. Compute Architecture
 
-本章详细介绍了进迭时空自研AI加速器的计算架构，主要包含设计理念和相关的指令集两个模块。
+This section dives into SpacemiT’s custom AI accelerator architecture, covering both its underlying design philosophy and the associated instruction set extensions.
 
-- [设计理念](../architecture/concept.md)
-- [AI 指令集](../architecture/instruction.md)
+- [Design Philosophy](../architecture/concept.md)
+- [AI Instruction Set](../architecture/instruction.md)

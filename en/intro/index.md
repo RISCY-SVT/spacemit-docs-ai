@@ -1,5 +1,5 @@
 sidebar_position: 1
 
-# 简介
+# Introduction
 
-[简介](ai_intro.md)
+[Introduction](ai_intro.md)

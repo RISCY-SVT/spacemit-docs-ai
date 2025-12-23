@@ -1,33 +1,42 @@
 sidebar_position: 1
 
-# 4.1 设计理念
+# 4.1 Design Philosophy
 
-- [4.1.1 概述](##411-概述)
-- [4.1.2 架构实践](##412-架构实践)
+## 4.1.1 Overview
 
-## 4.1.1 概述
-为了加速AI计算，芯片企业设计了多种专用处理器架构，如GPGPU、NPU、TPU等。这些专用处理器架构在执行调度代码及应用层代码时，需要主控CPU的配合，如下图所示。因此，通常需要构建复杂的异构调度系统来协调CPU和XPU的额外数据交互和同步。
+To accelerate AI workloads, many chip vendors have introduced dedicated processor architectures such as GPGPUs, NPUs, and TPUs. When running scheduling logic and application code, these accelerators usually rely on a host CPU to work together, as shown below. As a result, systems often need complex heterogeneous scheduling mechanisms to handle data movement and synchronization between the CPU and the accelerator (XPU).
+
 ![architect](./images/architect.webp)
 
-为了保证AI算力的通用性和易用性，进迭时空基于自身CPU核的研发能力，以标准RISC-V核为基础，创新性地在CPU内集成TensorCore，以RISC-V指令集为统一的软硬件接口，驱动Scalar标量算力、Vector向量算力和 Matrix AI算力，支持软件和AI模型同时在RISC-V AI核上运行，并通过程序正常跳转实现软件和AI模型之间的事件和数据交互，进而完成整个AI应用执行。我们把这种以RISC-V指令集为统一的软硬件接口，驱动Scalar标量算力、Vector向量算力和 Matrix AI算力的技术，叫做**同构融合技术**，这种具有AI算力的CPU称为**AI CPU**或者**智算核**。
+To make AI computing more general-purpose and easier to use, SpacemiT builds on its in-house CPU core design and takes a different approach. Based on standard RISC-V cores, Tensor Cores are integrated directly into the CPU. The RISC-V instruction set is used as a unified software–hardware interface to drive Scalar, Vector, and Matrix AI computing.
 
-**AI CPU**保留了CPU编程模型，开发者使用Linux线程就可以驱动AI算力，在硬件层面上对AI算力和通用CPU进行了更高层次的封装，开发者无需关注异构调度和复杂的驱动管理；并且以***RISC-V*** CPU为基础，可以便捷接入开源生态，保留开源软件的使用习惯；此外**AI CPU**兼具并行计算和逻辑计算能力，适配MOE模型推理。
+With this design, both regular software and AI models can run on the same RISC-V AI core. Standard program control flow enables data exchange and event coordination between software logic and AI computation, allowing the entire AI application to run end to end on a single architecture.
 
-在AI计算中，Scalar标量算力，Vector向量算力及Matrix AI算力都会被用到。其中：
-- Scalar标量算力，采用***RISC-V***标准指令集提供；
-- Vector向量算力，采用***RISC-V*** vector 1.0 指令集提供；
-- Matrix AI算力，采用***RISC-V*** [matrix扩展指令集](./instruction.md)提供。
+We call this approach—using the RISC-V instruction set as a unified interface to combine Scalar, Vector, and Matrix AI computing—**homogeneous fusion technology**. A CPU that includes this capability is referred to as an **AI CP**U, also known as an **Intelligent Computing Core**.
 
-## 4.1.2 架构实践
-目前我们已经发布了带有**AI CPU**的第一代芯片**K1**。他有四个通用CPU核**X60**和四个智算核 **A60**。在**A60**中，RISC-V Vector的位宽为256位，其matrix及vector理论算力展示如下，算力换算方法[可参考](./instruction.md)。
-Matrix算力: 0.5 TOPS/Core (Int8), 2 TOPS/Cluster (Int8) 
-Vector算力：
-- 0.128 TOPS/Core (Int8), 0.5 TOPS/Cluster (Int8)
+The **AI CPU** keeps the familiar CPU programming model. Developers can use standard Linux threads to drive AI computation, without dealing with heterogeneous schedulers or complex driver management. Because it is based on **RISC-V**, it integrates naturally with open-source ecosystems and existing software workflows. In addition, the **AI CPU** supports both parallel computation and control logic, making it well suited for MoE (Mixture of Experts) model inference.
+
+In AI workloads, all three types of computing are used:
+- Scalar computing is provided by the **RISC-V** standard instruction set
+- Vector computing is provided by the **RISC-V** Vector 1.0 instruction set
+- Matrix AI computing is provided by the **RISC-V** [Matrix Extension Instruction Set](./instruction.md)
+
+## 4.1.2 Architectural Practice
+
+We have released the first-generation chip featuring **AI CPUs**, named **K1**. It includes four general-purpose CPU cores (**X60**) and four intelligent computing cores (**A60**). In the **A60** core, the RISC-V Vector width is 256 bits. The theoretical matrix and vector performance is shown below; the performance calculation method can be found in [Matrix Extension Instruction Set](./instruction.md).
+
+Matrix performance:
+- 0.5 TOPS/Core (INT8)
+- 2 TOPS/Cluster (INT8)
+
+Vector performance:
+- 0.128 TOPS/Core (INT8), 0.5 TOPS/Cluster (INT8)
 - 0.064 TOPS/Core (FP16), 0.25 TOPS/Cluster (FP16)
 - 0.032 TOPS/Core (FP32)
 
-以开源项目[cpfp](https://github.com/pigirons/cpufp) 为基础，对K1 **AI CPU**中的**A60**核进行测试，实测数据如下：
-~~~
+Based on the open-source project [cpufp](https://github.com/pigirons/cpufp), we evaluated the **A60** core in the K1 **AI CPU**. The measured results are shown below:
+
+```
 $ ./cpufp --thread_pool=[0]
 Number Threads: 1
 Thread Pool Binding: 0
@@ -76,4 +85,4 @@ Thread Pool Binding: 0 1 2 3 4 5 6 7
 | vector          | vfmacc.vf(f64,f64,f64) | 133.42 GFLOPS    |
 | vector          | vfmacc.vv(f64,f64,f64) | 127.86 GFLOPS    |
 ---------------------------------------------------------------
-~~~
+```

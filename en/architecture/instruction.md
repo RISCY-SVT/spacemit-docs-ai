@@ -1,29 +1,40 @@
 sidebar_position: 2
 
-# 4.2 Matrix 扩展指令集
+# 4.2 Matrix Extension Instruction Set
 
-- [4.2.1 指令集介绍](#421-指令集介绍)
-- [4.2.2 进迭时空指令集](#422-进迭时空指令集)
-- [4.2.3 简单使用](#423-简单使用)
+## 4.2.1 Instruction Set Overview
 
-## 4.2.1 指令集介绍
-
-matirx扩展指令主要用于AI中最重要的计算，矩阵乘法。矩阵乘法的一般形式为：
+The RISC-V Matrix Extension is designed to accelerate one of the most critical operations in AI workloads: matrix multiplication. The canonical form of this operation is:
 $ C += A \times B $
-其中，C为输出矩阵，A和B为输入矩阵。根据输入输出矩阵使用的寄存器不同，***RISC-V***社区把matirx扩展指令分为三个方案 ，如下图所示：![三个指令集对比](./images/matrix_inst.jpg)
 
-- IME方案，矩阵计算的输入、输出矩阵都使用vector寄存器，详情可以加入[IME subgroup](https://lists.riscv.org/g/tech-integrated-matrix-extension)查看。
-- VME方案，矩阵计算的输入矩阵复用vector寄存器，输出矩阵使用专用扩展寄存器，详情可以加入[VME subgroup](https://lists.riscv.org/g/tech-vme)查看。
-- AME方案，矩阵计算的输入、输出矩阵都使用个专用寄存器，详情可以加入[AME subgroup](https://lists.riscv.org/g/tech-attached-matrix-extension)查看。
+where:
+- **C** is the output matrix,
+- **A** and **B** are input matrices.
 
-## 4.2.2 进迭时空指令集
+Depending on how input and output operands are mapped to architectural registers, the RISC-V community has proposed three distinct approaches for matrix extensions, as illustrated in the following diagram:
+![Three Instruction Set Proposals](./images/matrix_inst.jpg)
 
-进迭时空自定义的matirx扩展指令集，是IME的，[详情可见](https://github.com/spacemit-com/riscv-ime-extension-spec)。可以看到，K1（vlen=256）中的matrix计算单元形状是：
-$ 4 \times 8 \times 4 $，
-则单个matrix计算单元的算力为：
-$ 2 \times 4 \times 8 \times 4 \times 2Ghz = 0.5TOPS $。
+- **IME (Integrated Matrix Extension)**: Both input and output matrices use standard vector registers. For more details, see the [IME subgroup](https://lists.riscv.org/g/tech-integrated-matrix-extension).
+- **VME (Vector-Matrix Extension)**: Input matrices reuse vector registers, while the output matrix uses dedicated extended registers. For more details, see the [VME subgroup](https://lists.riscv.org/g/tech-vme).
+- **AME (Attached Matrix Extension)**: Both input and output matrices use dedicated registers. For more details, see the [AME subgroup](https://lists.riscv.org/g/tech-attached-matrix-extension).
 
-## 4.2.3 简单使用
+## 4.2.2 SpacemiT Instruction Set
 
-进迭时空基于IME标准的扩展指令集，基本延续了vector标准指令集的编程模型。标准vector的使用[可参考]()。
-IME指令集的使用[可参考](https://github.com/spacemit-com/riscv-ime-extension-spec/tree/master/example)
+SpacemiT's custom matrix extension instruction set is based on the IME proposal. [See the full specification here](https://github.com/spacemit-com/riscv-ime-extension-spec).  
+
+In the K1 core (with `vlen=256`), the matrix compute unit has a native tile shape of:  
+
+$ 4 \times 8 \times 4 $
+
+Thus, the computational throughput per unit is:  
+
+$ 2 \times 4 \times 8 \times 4 \times 2Ghz = 0.5TOPS $
+
+## 4.2.3 Basic Usage
+
+SpacemiT's extended instruction set, based on the IME standard, largely follows the programming model of the standard RISC-V vector instruction set.  
+
+For reference on standard vector instruction usage, see [the relevant documentation]().  
+
+For examples of IME instruction usage, refer to the [sample code repository](https://github.com/spacemit-com/riscv-ime-extension-spec/tree/master/example).
+
