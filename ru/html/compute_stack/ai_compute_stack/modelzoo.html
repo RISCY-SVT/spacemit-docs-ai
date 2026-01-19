@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ModelZoo</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="home-link" href="../../index.html">Документация ИИ SpacemiT</a>
+    </div>
+  </header>
+  <main class="container content">
+<h1 id="modelzoo">ModelZoo</h1>
+<blockquote>
+<p>Данные моделей в ModelZoo регулярно обновляются</p>
+</blockquote>
+<ul>
+<li><a href="#базовые-модели">Базовые модели</a></li>
+<li><a href="#resnet">resnet</a></li>
+<li><a href="#mobilenet">mobilenet</a></li>
+<li><a href="#efficientnet">efficientnet</a></li>
+<li><a href="#vit">vit</a></li>
+<li><a href="#yolov5">yolov5</a></li>
+<li><a href="#yolov6">yolov6</a></li>
+<li><a href="#yolov8">yolov8</a></li>
+<li><a href="#yolov12">yolov12</a></li>
+<li><a href="#большие-модели">Большие модели</a></li>
+<li><a href="#qwen3">Qwen3</a></li>
+<li><a href="#qwen25">Qwen2.5</a></li>
+</ul>
+<h2 id="базовые-модели">Базовые модели</h2>
+<blockquote>
+<ul>
+<li>Версия движка инференса: spacemit-ort-2.0.1</li>
+<li>ОС: bianbu-2.2</li>
+<li>Дата: 2025-11-18</li>
+</ul>
+</blockquote>
+<h3 id="resnet">resnet</h3>
+<ul>
+<li>K1</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Тип</th>
+<th>Форма входа</th>
+<th>1 ядро (мс)</th>
+<th>2 ядра (мс)</th>
+<th>4 ядра (мс)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>resnet18</td>
+<td>int8</td>
+<td>224x224</td>
+<td>39.2943</td>
+<td>22.208</td>
+<td>13.4936</td>
+</tr>
+<tr>
+<td>resnet50</td>
+<td>int8</td>
+<td>224x224</td>
+<td>92.0352</td>
+<td>52.6714</td>
+<td>32.3108</td>
+</tr>
+<tr>
+<td>resnet50</td>
+<td>fp16</td>
+<td>224x224</td>
+<td>695.636</td>
+<td>349.947</td>
+<td>221.555</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h3 id="mobilenet">mobilenet</h3>
+<ul>
+<li>K1</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Тип</th>
+<th>Форма входа</th>
+<th>1 ядро (мс)</th>
+<th>2 ядра (мс)</th>
+<th>4 ядра (мс)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mobilenet_v1</td>
+<td>int8</td>
+<td>224x224</td>
+<td>34.9488</td>
+<td>19.5954</td>
+<td>13.2855</td>
+</tr>
+<tr>
+<td>mobilenet_v2</td>
+<td>int8</td>
+<td>224x224</td>
+<td>34.8</td>
+<td>21.0984</td>
+<td>13.723</td>
+</tr>
+<tr>
+<td>mobilenet_v3_small</td>
+<td>fp16</td>
+<td>224x224</td>
+<td>53.95</td>
+<td>30.97</td>
+<td>19.55</td>
+</tr>
+<tr>
+<td>mobilenet_v3_large</td>
+<td>fp16</td>
+<td>224x224</td>
+<td>111.82</td>
+<td>63.73</td>
+<td>37.67</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h3 id="efficientnet">efficientnet</h3>
+<ul>
+<li>K1</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Тип</th>
+<th>Форма входа</th>
+<th>1 ядро (мс)</th>
+<th>2 ядра (мс)</th>
+<th>4 ядра (мс)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>efficientnet_v1_b0</td>
+<td>int8</td>
+<td>224x224</td>
+<td>76.1146</td>
+<td>43.7698</td>
+<td>28.0568</td>
+</tr>
+<tr>
+<td>efficientnet_v1_b1</td>
+<td>int8</td>
+<td>224x224</td>
+<td>111.128</td>
+<td>63.4798</td>
+<td>39.5626</td>
+</tr>
+<tr>
+<td>efficientnet_v2_s</td>
+<td>int8</td>
+<td>224x224</td>
+<td>149.12</td>
+<td>86.0311</td>
+<td>54.5618</td>
+</tr>
+<tr>
+<td>efficientnet_v1_b0</td>
+<td>fp16</td>
+<td>224x224</td>
+<td>228.692</td>
+<td>126.799</td>
+<td>74.8569</td>
+</tr>
+<tr>
+<td>efficientnet_v1_b1</td>
+<td>fp16</td>
+<td>224x224</td>
+<td>331.06</td>
+<td>183.432</td>
+<td>107.16</td>
+</tr>
+<tr>
+<td>efficientnet_v2_s</td>
+<td>fp16</td>
+<td>224x224</td>
+<td>565.195</td>
+<td>313.629</td>
+<td>182.697</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h3 id="vit">vit</h3>
+<ul>
+<li>K1</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Тип</th>
+<th>Форма входа</th>
+<th>1 ядро (мс)</th>
+<th>2 ядра (мс)</th>
+<th>4 ядра (мс)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vit_b_16</td>
+<td>int8</td>
+<td>224x224</td>
+<td>526.331</td>
+<td>357.206</td>
+<td>203.762</td>
+</tr>
+<tr>
+<td>vit_b_16</td>
+<td>fp16</td>
+<td>224x224</td>
+<td>3428.19</td>
+<td>1962.19</td>
+<td>1142.83</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h3 id="yolov5">yolov5</h3>
+<ul>
+<li>K1</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Тип</th>
+<th>Форма входа</th>
+<th>1 ядро (мс)</th>
+<th>2 ядра (мс)</th>
+<th>4 ядра (мс)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>yolov5n</td>
+<td>int8</td>
+<td>640x640</td>
+<td>229.827</td>
+<td>127.649</td>
+<td>81.7252</td>
+</tr>
+<tr>
+<td>yolov5s</td>
+<td>int8</td>
+<td>640x640</td>
+<td>452.873</td>
+<td>238.459</td>
+<td>142.081</td>
+</tr>
+<tr>
+<td>yolov5m</td>
+<td>int8</td>
+<td>640x640</td>
+<td>980.426</td>
+<td>481.453</td>
+<td>272.397</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h3 id="yolov6">yolov6</h3>
+<ul>
+<li>K1</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Тип</th>
+<th>Форма входа</th>
+<th>1 ядро (мс)</th>
+<th>2 ядра (мс)</th>
+<th>4 ядра (мс)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>yolov6n</td>
+<td>int8</td>
+<td>640x640</td>
+<td>160.075</td>
+<td>90.2756</td>
+<td>59.3966</td>
+</tr>
+<tr>
+<td>yolov6s</td>
+<td>int8</td>
+<td>640x640</td>
+<td>431.835</td>
+<td>219.982</td>
+<td>125.631</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h3 id="yolov8">yolov8</h3>
+<ul>
+<li>K1</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Тип</th>
+<th>Форма входа</th>
+<th>1 ядро (мс)</th>
+<th>2 ядра (мс)</th>
+<th>4 ядра (мс)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>yolov8n</td>
+<td>int8</td>
+<td>640x640</td>
+<td>209.169</td>
+<td>117.75</td>
+<td>76.641</td>
+</tr>
+<tr>
+<td>yolov8s</td>
+<td>int8</td>
+<td>640x640</td>
+<td>459.718</td>
+<td>239.252</td>
+<td>142.641</td>
+</tr>
+<tr>
+<td>yolov8m</td>
+<td>int8</td>
+<td>640x640</td>
+<td>1000.35</td>
+<td>510.228</td>
+<td>286.011</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h3 id="yolov12">yolov12</h3>
+<ul>
+<li>K1</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Модель</th>
+<th>Тип</th>
+<th>Форма входа</th>
+<th>1 ядро (мс)</th>
+<th>2 ядра (мс)</th>
+<th>4 ядра (мс)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>yolo12n</td>
+<td>int8</td>
+<td>640x640</td>
+<td>422.273</td>
+<td>246.346</td>
+<td>168.666</td>
+</tr>
+<tr>
+<td>yolo12s</td>
+<td>int8</td>
+<td>640x640</td>
+<td>892.293</td>
+<td>495.835</td>
+<td>326.551</td>
+</tr>
+<tr>
+<td>yolo12m</td>
+<td>int8</td>
+<td>640x640</td>
+<td>2080.74</td>
+<td>1072.63</td>
+<td>681.091</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h2 id="большие-модели">Большие модели</h2>
+<h3 id="qwen3">Qwen3</h3>
+<ul>
+<li>K1</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h3 id="qwen25">Qwen2.5</h3>
+<ul>
+<li>K1</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<ul>
+<li>K3</li>
+</ul>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+  </main>
+</body>
+</html>

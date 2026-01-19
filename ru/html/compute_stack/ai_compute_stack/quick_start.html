@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Руководство по быстрому старту</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="home-link" href="../../index.html">Документация ИИ SpacemiT</a>
+    </div>
+  </header>
+  <main class="container content">
+<h1 id="руководство-по-быстрому-старту">Руководство по быстрому старту</h1>
+<blockquote>
+<p>Демонстрация инференса на модели YOLOv8</p>
+</blockquote>
+<h2 id="преобразование-и-квантование-модели">Преобразование и квантование модели</h2>
+<ul>
+<li>Экспортируйте модель YOLOv8n из <code>ultralytics</code><blockquote>
+<p>Если у вас уже есть ONNX-модель, можно пропустить этот шаг</p>
+</blockquote>
+</li>
+</ul>
+<pre><code class="language-python">from ultralytics import YOLO
+model = YOLO(&quot;yolov8n.pt&quot;)
+model.export(format=&quot;onnx&quot;, imgsz=(640, 640), opset=17)
+</code></pre>
+<ul>
+<li>Квантование модели<blockquote>
+<p>Установите и подготовьте данные и параметры квантования через <a href="./xslim.html">описание инструмента</a></p>
+</blockquote>
+</li>
+</ul>
+<pre><code class="language-bash"># Статическое квантование
+python -m xslim -c ./yolov8n.json -i yolov8n.onnx -o yolov8n.q.onnx
+</code></pre>
+<pre><code class="language-bash"># Динамическое квантование
+python -m xslim -i yolov8n.onnx -o yolov8n.fp16.onnx --dynq
+</code></pre>
+<pre><code class="language-bash"># FP16
+python -m xslim -i yolov8n.onnx -o yolov8n.fp16.onnx --fp16
+</code></pre>
+<h2 id="тестирование-производительности-модели">Тестирование производительности модели</h2>
+<pre><code class="language-bash"># Например, внутри каталога spacemit-ort.riscv64.2.0.1
+export LD_LIBRARY_PATH=./lib
+
+# Укажите корректный путь к модели
+./bin/onnxruntime_perf_test yolov8n.q.onnx -e spacemit -r 10 -x 4 -S 1 -s -I -c 1
+</code></pre>
+<p>Например, на K1 вывод будет таким; это дает общее представление о производительности модели</p>
+<pre><code>./bin/onnxruntime_perf_test /mnt/modelzoo/detection/yolov8n/yolov8n.q.onnx -e spacemit -r 10 -x 4 -S 1 -s -I -c 1
+using SpaceMITExecutionProvider
+Setting intra_op_num_threads to 4
+Session creation time cost: 1.14476 s
+First inference time cost: 248 ms
+Total inference time cost: 0.823382 s
+Total inference requests: 10
+Average inference time cost: 82.3382 ms
+Total inference run time: 0.823483 s
+Number of inferences per second: 12.1435
+Avg CPU usage: 48 %
+Peak working set size: 78946304 bytes
+Avg CPU usage:48
+Peak working set size:78946304
+Runs:10
+Min Latency: 0.0808129 s
+Max Latency: 0.0838817 s
+P50 Latency: 0.0826095 s
+P90 Latency: 0.0838817 s
+P95 Latency: 0.0838817 s
+P99 Latency: 0.0838817 s
+P999 Latency: 0.0838817 s
+</code></pre>
+<h2 id="интеграция-инференса-в-приложение">Интеграция инференса в приложение</h2>
+<p>Например, см. <a href="https://github.com/ultralytics/ultralytics/blob/main/examples/YOLOv8-ONNXRuntime-CPP/inference.cpp">исходный код инференса yolov8_cpp_ort</a></p>
+<pre><code class="language-C++">session = new Ort::Session(env, modelPath, sessionOption);
+</code></pre>
+<p>Замените на следующее</p>
+<pre><code class="language-C++">#include &lt;onnxruntime_cxx_api.h&gt;
+#include &quot;spacemit_ort_env.h&quot;
+//....
+//....
+//....
+SessionOptionsSpaceMITEnvInit(session_options, provider_options);
+session = new Ort::Session(env, modelPath, sessionOption);
+</code></pre>
+  </main>
+</body>
+</html>

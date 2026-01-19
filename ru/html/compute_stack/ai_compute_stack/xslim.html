@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XSlim</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="home-link" href="../../index.html">Документация ИИ SpacemiT</a>
+    </div>
+  </header>
+  <main class="container content">
+<h1 id="xslim">XSlim</h1>
+<blockquote>
+<p><strong>XSlim</strong> — это инструмент PTQ-квантования от <strong>SpacemiT</strong>. Он интегрирует настроенные под чип стратегии квантования и предоставляет единый интерфейс через JSON-конфиг для квантования моделей. Проект полностью открыт на GitHub: <a href="https://github.com/spacemit-com/xslim">github-xslim</a></p>
+</blockquote>
+<hr />
+<ul>
+<li><a href="#быстрый-старт">Быстрый старт</a></li>
+<li><a href="#настройка-параметров-квантования">Настройка параметров квантования</a></li>
+<li><a href="#тонкая-настройка-точности-квантования">Тонкая настройка точности квантования</a></li>
+<li><a href="#журнал-изменений">Журнал изменений</a></li>
+</ul>
+<h2 id="быстрый-старт">Быстрый старт</h2>
+<ul>
+<li>Установка</li>
+</ul>
+<pre><code>pip install xslim
+</code></pre>
+<ul>
+<li>Python</li>
+</ul>
+<pre><code class="language-python">import xslim
+
+demo_json = dict()
+# заполните demo_json требуемыми полями
+
+demo_json_path = &quot;./demo_json.json&quot;
+# Использовать словарь
+xslim.quantize_onnx_model(demo_json)
+# Использовать JSON-файл
+xslim.quantize_onnx_model(demo_json_path)
+
+# При вызове API можно передать путь к модели или ModelProto
+# xslim.quantize_onnx_model(&quot;resnet18.json&quot;, &quot;/home/share/modelzoo/classification/resnet18/resnet18.onnx&quot;)
+
+# xslim.quantize_onnx_model(
+#    &quot;resnet18.json&quot;, &quot;/home/share/modelzoo/classification/resnet18/resnet18.onnx&quot;, &quot;resnet18_output.onnx&quot;
+# )
+
+# import onnx
+# onnx_model = onnx.load(&quot;/home/share/modelzoo/classification/resnet18/resnet18.onnx&quot;)
+# quantized_onnx_model = xslim.quantize_onnx_model(&quot;resnet18.json&quot;, onnx_model)
+</code></pre>
+<ul>
+<li>Командная строка</li>
+</ul>
+<pre><code class="language-bash">python -m xslim --config ./demo_json.json
+# Указать пути входной и выходной моделей
+python -m xslim -c ./demo_json.json -i demo.onnx -o demo.q.onnx
+# Использовать динамическое квантование, JSON не требуется
+python -m xslim -i demo.onnx -o demo.q.onnx --dynq
+# Преобразовать в FP16, JSON не требуется
+python -m xslim -i demo.onnx -o demo.q.onnx --fp16
+# Только упрощение модели без квантования, JSON не требуется
+python -m xslim -i demo.onnx -o demo.q.onnx
+</code></pre>
+<hr />
+<h2 id="настройка-параметров-квантования">Настройка параметров квантования</h2>
+<ul>
+<li>Пример JSON-конфига</li>
+</ul>
+<pre><code>{
+    &quot;model_parameters&quot; : {
+        &quot;onnx_model&quot;: &quot;&quot;, &quot;путь к ONNX-модели&quot;
+        &quot;output_prefix&quot;: &quot;&quot;, &quot;можно опустить, префикс имени выходной квантованной модели&quot;
+        &quot;working_dir&quot;: &quot;&quot; &quot;можно опустить, каталог вывода и файлов, создаваемых при квантовании&quot;
+        &quot;skip_onnxsim&quot;: false &quot;пропустить упрощение модели через onnxsim, по умолчанию false&quot;
+    },
+    &quot;calibration_parameters&quot; : {
+        &quot;calibration_step&quot;: 100, &quot;можно опустить, максимум калибровочных файлов, по умолчанию 100&quot;
+        &quot;calibration_device&quot;: &quot;cpu&quot;, &quot;можно опустить, по умолчанию cuda, автоопределение, иначе cpu&quot;
+        &quot;calibration_type&quot;: &quot;default&quot;,  &quot;можно опустить, по умолчанию default; варианты: kl, minmax, percentile, mse&quot;
+        &quot;input_parametres&quot;: [
+            {
+                &quot;input_name&quot;: &quot;data&quot;, &quot;можно опустить, читается из модели&quot;,
+                &quot;input_shape&quot;: [1, 3, 224, 224], &quot;можно опустить, форма входа читается из модели&quot;
+                &quot;dtype&quot;: &quot;float32&quot;, &quot;можно опустить, тип входных данных читается из модели&quot;
+                &quot;file_type&quot;: &quot;img&quot;, &quot;можно опустить, по умолчанию img; варианты: img, npy, raw&quot;
+                &quot;color_format&quot;: &quot;bgr&quot;, &quot;можно опустить, по умолчанию bgr&quot;
+                &quot;mean_value&quot;: [103.94, 116.78, 123.68], &quot;можно опустить, по умолчанию пусто&quot;
+                &quot;std_value&quot;: [57, 57, 57], &quot;можно опустить, по умолчанию пусто&quot;
+                &quot;preprocess_file&quot;: &quot;&quot;, &quot;скрипт py для кастомной предобработки,
+                                        есть предустановленные поля PT_IMAGENET, IMAGENET&quot;
+                &quot;data_list_path&quot;: &quot;&quot; &quot;обязательное поле, путь к списку калибровочных данных&quot;
+            },
+            {
+                &quot;input_name&quot;: &quot;data1&quot;,
+                &quot;input_shape&quot;: [1, 3, 224, 224],
+                &quot;dtype&quot;: &quot;float32&quot;,
+                &quot;file_type&quot;: &quot;img&quot;,
+                &quot;mean_value&quot;: [103.94, 116.78, 123.68],
+                &quot;std_value&quot;: [57, 57, 57],
+                &quot;preprocess_file&quot;: &quot;&quot;,
+                &quot;data_list_path&quot;: &quot;&quot;
+            }
+        ]
+    },
+    &quot;Ниже все можно опустить&quot;
+    &quot;quantization_parameters&quot;: {
+        &quot;analysis_enable&quot;: true, &quot;включить анализ после квантования, по умолчанию true&quot;
+        &quot;precision_level&quot;: 0
+        &quot;finetune_level&quot;: 1 &quot;по умолчанию 1; варианты: 0, 1, 2, 3&quot;
+        &quot;max_percentile&quot;: 0.9999 &quot;указать порог percentile-квантования&quot;
+        &quot;custom_setting&quot;: [
+            &quot;все квантованные операторы, ограниченные входными и выходными ребрами; на входе можно не указывать константы&quot;
+            {
+                &quot;input_names&quot;: [&quot;aaa&quot;, &quot;bbb&quot;],
+                &quot;output_names&quot;: [&quot;ccc&quot;],
+                &quot;max_percentile&quot;: 0.999,
+                &quot;precision_level&quot;: 2,
+                &quot;calibration_type&quot;: &quot;default&quot;
+            }
+        ],
+        &quot;truncate_var_names&quot;: [&quot;/Concat_5_output_0&quot;, &quot;/Transpose_6_output_0&quot;] &quot;усечение модели&quot;
+    }
+}
+</code></pre>
+<ul>
+<li>Поля, которые можно опустить</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>По умолчанию</th>
+<th>Допустимые значения</th>
+<th>Примечания</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>output_prefix</td>
+<td>имя файла ONNX без суффикса, выход оканчивается на .q.onnx</td>
+<td>/</td>
+<td></td>
+</tr>
+<tr>
+<td>working_dir</td>
+<td>каталог, где находится onnx_model</td>
+<td>/</td>
+<td></td>
+</tr>
+<tr>
+<td>calibration_step</td>
+<td>100</td>
+<td></td>
+<td>рекомендуемый диапазон 100-1000</td>
+</tr>
+<tr>
+<td>calibration_device</td>
+<td>cuda</td>
+<td>cuda, cpu</td>
+<td>определяется автоматически</td>
+</tr>
+<tr>
+<td>calibration_type</td>
+<td>default</td>
+<td>default, kl, minmax, percentile, mse</td>
+<td>рекомендуется начать с default, затем попробовать percentile или minmax</td>
+</tr>
+<tr>
+<td>input_name</td>
+<td>читается из модели ONNX</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>input_shape</td>
+<td>читается из модели ONNX</td>
+<td></td>
+<td>форма должна быть целочисленной; символический batch поддерживается и по умолчанию равен 1</td>
+</tr>
+<tr>
+<td>dtype</td>
+<td>читается из модели ONNX<br></td>
+<td>float32, int8, uint8, int16<br></td>
+<td>- сейчас поддерживается только float32</td>
+</tr>
+<tr>
+<td>file_type</td>
+<td>img</td>
+<td>img, npy, raw</td>
+<td>- для raw поддерживаются только данные, совпадающие с dtype (по умолчанию float32)</td>
+</tr>
+<tr>
+<td>preprocess_file</td>
+<td>None</td>
+<td>PT_IMAGENET, IMAGENET</td>
+<td>встроены два стандартных варианта предобработки ImageNet</td>
+</tr>
+<tr>
+<td>finetune_level</td>
+<td>1</td>
+<td>0, 1, 2, 3</td>
+<td>- 0: без агрессивной подстройки параметров<br>- 1: возможна статическая настройка параметров квантования<br>- 2+: настройка параметров квантования по блокам на основе потерь от квантования</td>
+</tr>
+<tr>
+<td>precision_level<br></td>
+<td>0</td>
+<td>0, 1, 2, 3, 4<br></td>
+<td>- 0: полное int8-квантование, даже при тюнинге остается int8<br>- 1-2: частичное int8-квантование (подходит для большинства Transformer-моделей)<br>- 3: динамическое квантование<br>- 4: FP16</td>
+</tr>
+<tr>
+<td>max_percentile</td>
+<td>0.9999</td>
+<td></td>
+<td>диапазон усечения для percentile-квантования, минимум 0.99</td>
+</tr>
+<tr>
+<td>custom_setting</td>
+<td>None</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>truncate_var_names</td>
+<td>[]</td>
+<td></td>
+<td>граф делится по именам тензоров; результат деления проверяется, иначе ошибка</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Правила для файла списка калибровочных данных</li>
+</ul>
+<p>Каждая строка в img_list.txt — путь к одному файлу калибровочных данных. Можно указывать относительные пути (относительно расположения img_list.txt) или абсолютные. Для моделей с несколькими входами убедитесь, что порядок файлов в списках совпадает.</p>
+<pre><code>QuantZoo/Data/Imagenet/Calib/n01440764/ILSVRC2012_val_00002138.JPEG
+QuantZoo/Data/Imagenet/Calib/n01443537/ILSVRC2012_val_00000994.JPEG
+QuantZoo/Data/Imagenet/Calib/n01484850/ILSVRC2012_val_00014467.JPEG
+QuantZoo/Data/Imagenet/Calib/n01491361/ILSVRC2012_val_00003204.JPEG
+QuantZoo/Data/Imagenet/Calib/n01494475/ILSVRC2012_val_00015545.JPEG
+QuantZoo/Data/Imagenet/Calib/n01496331/ILSVRC2012_val_00008640.JPEG
+</code></pre>
+<ul>
+<li>Правила для preprocess_file</li>
+</ul>
+<p>Например, если есть скрипт custom_preprocess.py, то в конфиге preprocess_file нужно указать <code>custom_preprocess.py:preprocess_impl</code>, чтобы сослаться на конкретную функцию. Для моделей с несколькими входами можно повторно использовать предобработку, если логика одинакова.</p>
+<pre><code class="language-python">from typing import Sequence
+import torch
+import cv2
+import numpy as np
+
+def preprocess_impl(path_list: Sequence[str], input_parametr: dict) -&gt; torch.Tensor:
+    &quot;&quot;&quot;
+    Прочитать path_list, выполнить предобработку согласно input_parametr
+    и вернуть torch.Tensor.
+
+    Args:
+        path_list (Sequence[str]): Список файлов для одного калибровочного batch
+        input_parametr (dict): Соответствует calibration_parameters.input_parametres[idx]
+
+    Returns:
+        torch.Tensor: Калибровочные данные одного batch
+    &quot;&quot;&quot;
+    batch_list = []
+    mean_value = input_parametr[&quot;mean_value&quot;]
+    std_value = input_parametr[&quot;std_value&quot;]
+    input_shape = input_parametr[&quot;input_shape&quot;]
+    for file_path in path_list:
+        img = cv2.imread(file_path)
+        img = cv2.resize(img, (input_shape[-1], input_shape[-2]), interpolation=cv2.INTER_AREA)
+        img = img.astype(np.float32)
+        img = (img - mean_value) / std_value
+        img = np.transpose(img, (2, 0, 1))
+        img = torch.from_numpy(img)
+        img = torch.unsqueeze(img, 0)
+        batch_list.append(img)
+    return torch.cat(batch_list, dim=0)
+</code></pre>
+<h2 id="тонкая-настройка-точности-квантования">Тонкая настройка точности квантования</h2>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+<h2 id="журнал-изменений">Журнал изменений</h2>
+<p>Подробности см. в <a href="https://github.com/spacemit-com/xslim/releases">github-xslim-releases</a></p>
+  </main>
+</body>
+</html>

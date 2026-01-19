@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ONNXRuntime EP FAQ</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="home-link" href="../../index.html">Документация ИИ SpacemiT</a>
+    </div>
+  </header>
+  <main class="container content">
+<h1 id="onnxruntime-ep-faq">ONNXRuntime EP FAQ</h1>
+<p><a href="#вопросы-производительности">Вопросы производительности</a>
+<a href="#вопросы-точности">Вопросы точности</a></p>
+<h2 id="вопросы-производительности">Вопросы производительности</h2>
+<p>В: Как нескольким моделям совместно использовать вычислительные ресурсы?</p>
+<blockquote>
+<p>Если вы уверены, что несколько моделей выполняются последовательно и не мешают друг другу, можно включить <code>SPACEMIT_EP_USE_GLOBAL_INTRA_THREAD</code>. Это позволит всем моделям использовать общий пул вычислительных ресурсов и повысить общую производительность за счет их повторного использования.</p>
+</blockquote>
+<hr />
+<p>В: Что делать, если запускается слишком много вычислительных потоков и это ухудшает производительность?</p>
+<blockquote>
+<p>Если большинство операторов модели может выполняться провайдером выполнения (EP), можно установить число потоков ONNX Runtime (ORT) равным <code>1</code> и использовать <code>SPACEMIT_EP_INTRA_THREAD_NUM</code> для управления количеством потоков.</p>
+</blockquote>
+<h2 id="вопросы-точности">Вопросы точности</h2>
+<blockquote>
+<p>Будет добавлено</p>
+</blockquote>
+  </main>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SpacemiT-ONNXRuntime</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="home-link" href="../../index.html">Документация ИИ SpacemiT</a>
+    </div>
+  </header>
+  <main class="container content">
+<h1 id="spacemit-onnxruntime">SpacemiT-ONNXRuntime</h1>
+<blockquote>
+<p><strong>SpacemiT-ONNXRuntime</strong> включает базовую библиотеку инференса <a href="https://github.com/microsoft/onnxruntime">ONNXRuntime</a> и ускоряющий бэкенд SpacemiT-ExecutionProvider. Архитектура остается развязанной, поэтому способ использования почти полностью совпадает с версией ONNXRuntime от сообщества.</p>
+</blockquote>
+<hr />
+<ul>
+<li><a href="#быстрый-старт">Быстрый старт</a><ul>
+<li><a href="#получение-ресурсов">Получение ресурсов</a></li>
+<li><a href="#инференс-модели-onnxruntime">Инференс модели ONNXRuntime</a></li>
+<li><a href="#бэкенд-spacemit-executionprovider">Бэкенд SpacemiT-ExecutionProvider</a></li>
+<li><a href="#быстрая-проверка-производительности-модели">Быстрая проверка производительности модели</a></li>
+</ul>
+</li>
+<li><a href="#описание-provideroption">Описание ProviderOption</a><ul>
+<li><a href="#spacemit_ep_intra_thread_num"><code>SPACEMIT_EP_INTRA_THREAD_NUM</code></a></li>
+<li><a href="#spacemit_ep_use_global_intra_thread"><code>SPACEMIT_EP_USE_GLOBAL_INTRA_THREAD</code></a></li>
+<li><a href="#spacemit_ep_dump_subgraphs"><code>SPACEMIT_EP_DUMP_SUBGRAPHS</code></a></li>
+<li><a href="#spacemit_ep_debug_profile"><code>SPACEMIT_EP_DEBUG_PROFILE</code></a></li>
+<li><a href="#spacemit_ep_dump_tensors"><code>SPACEMIT_EP_DUMP_TENSORS</code></a></li>
+<li><a href="#spacemit_ep_disable_op_type_filter"><code>SPACEMIT_EP_DISABLE_OP_TYPE_FILTER</code></a></li>
+<li><a href="#spacemit_ep_disable_op_name_filter"><code>SPACEMIT_EP_DISABLE_OP_NAME_FILTER</code></a></li>
+<li><a href="#spacemit_ep_disable_float16_epilogue"><code>SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE</code></a></li>
+</ul>
+</li>
+<li><a href="#описание-демо">Описание демо</a></li>
+<li><a href="#onnxruntime_perf_test">onnxruntime_perf_test</a></li>
+<li><a href="#onnx_test_runner">onnx_test_runner</a></li>
+<li><a href="#описание-операторов-ep">Описание операторов EP</a></li>
+<li><a href="#данные-производительности-моделей">Данные производительности моделей</a></li>
+<li><a href="#faq">FAQ</a></li>
+</ul>
+<h2 id="быстрый-старт">Быстрый старт</h2>
+<h4 id="получение-ресурсов">Получение ресурсов</h4>
+<blockquote>
+<p>&#x2139;&#xfe0f;Каталог <code>https://archive.spacemit.com/spacemit-ai/onnxruntime/</code> регулярно обновляется</p>
+</blockquote>
+<pre><code class="language-bash"># Например, скачать версию 2.0.1
+wget https://archive.spacemit.com/spacemit-ai/onnxruntime/spacemit-ort.riscv64.2.0.1.tar.gz
+</code></pre>
+<h4 id="инференс-модели-onnxruntime">Инференс модели ONNXRuntime</h4>
+<p>Подробности см. в документации сообщества <a href="https://onnxruntime.ai/docs/#onnx-runtime-for-inferencing">ONNXRuntime (Inference Overview)</a> и в примерах кода <a href="https://github.com/microsoft/onnxruntime-inference-examples">ONNXRuntime Inference Examples</a></p>
+<h4 id="бэкенд-spacemit-executionprovider">Бэкенд SpacemiT-ExecutionProvider</h4>
+<ul>
+<li>C&amp;C++</li>
+</ul>
+<pre><code>#include &lt;onnxruntime_cxx_api.h&gt;
+#include &quot;spacemit_ort_env.h&quot;
+
+Ort::Env env(ORT_LOGGING_LEVEL_WARNING, &quot;demo&quot;);
+Ort::SessionOptions session_options;
+std::unordered_map&lt;std::string, std::string&gt; provider_options;
+
+// Ниже параметры EP, опционально
+// provider_options[&quot;SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE&quot;] = &quot;1&quot;; отключить приближенный epilogue
+// provider_options[&quot;SPACEMIT_EP_DUMP_SUBGRAPHS&quot;] = &quot;1&quot;; экспортировать скомпилированные EP подграфы в каталоге запуска с префиксом SpaceMITExecutionProvider_SpineSubgraph_
+// provider_options[&quot;SPACEMIT_EP_DEBUG_PROFILE&quot;] = &quot;demo&quot;; выгрузить профиль выполнения EP в JSON с заданным префиксом
+SessionOptionsSpaceMITEnvInit(session_options, provider_options);
+Ort::Session session(env, net_param_path, session_options);
+
+// ... далее использование совпадает с community ONNXRuntime
+</code></pre>
+<ul>
+<li>Python</li>
+</ul>
+<pre><code>import onnxruntime as ort
+import numpy as np
+import spacemit_ort
+
+eps = ort.get_available_providers()
+net_param_path = &quot;resnet18.q.onnx&quot;
+
+# определение provider_options такое же, как в C++
+ep_provider_options = {}
+# экспортировать скомпилированные EP подграфы в каталоге запуска с префиксом SpaceMITExecutionProvider_SpineSubgraph_
+# ep_provider_options [&quot;SPACEMIT_EP_DUMP_SUBGRAPHS&quot;] = &quot;1&quot;;
+# выгрузить профиль выполнения EP в JSON с заданным префиксом
+# ep_provider_options [&quot;SPACEMIT_EP_DEBUG_PROFILE&quot;] = &quot;demo&quot;;
+
+session = ort.InferenceSession(net_param_path,
+                providers=[&quot;SpaceMITExecutionProvider&quot;],
+                provider_options=[ep_provider_options ])
+
+input_tensor = np.ones((1, 3, 224, 224), dtype=np.float32)
+outputs = session.run(None, {&quot;data&quot;: input_tensor})
+</code></pre>
+<h4 id="быстрая-проверка-производительности-модели">Быстрая проверка производительности модели</h4>
+<blockquote>
+<p>&#x2139;&#xfe0f;Можно ориентироваться на <a href="https://github.com/spacemit-com/spacemit-demo">spacemit-demo</a></p>
+</blockquote>
+<hr />
+<h2 id="описание-provideroption">Описание ProviderOption</h2>
+<h4 id="spacemit-ep-intra-thread-num"><code>SPACEMIT_EP_INTRA_THREAD_NUM</code></h4>
+<blockquote>
+<ul>
+<li>Отдельно задает число потоков EP и не зависит от ONNXRuntime <code>intra_thread_num</code></li>
+<li>&#x2139;&#xfe0f;Если задан только <code>session_options.intra_thread_num</code>, это эквивалентно <code>SPACEMIT_EP_INTRA_THREAD_NUM = intra_thread_num</code>, и запускается <code>2 * intra_thread_num</code> вычислительных потоков</li>
+</ul>
+</blockquote>
+<pre><code class="language-C++">std::unordered_map&lt;std::string, std::string&gt; provider_options;
+provider_options[&quot;SPACEMIT_EP_INTRA_THREAD_NUM&quot;] = &quot;4&quot;;
+</code></pre>
+<h4 id="spacemit-ep-use-global-intra-thread"><code>SPACEMIT_EP_USE_GLOBAL_INTRA_THREAD</code></h4>
+<blockquote>
+<ul>
+<li>В одном процессе используется единый пул intra-потоков для всех сессий с EP</li>
+</ul>
+</blockquote>
+<pre><code class="language-C++">std::unordered_map&lt;std::string, std::string&gt; provider_options;
+// &quot;1&quot; означает enable, любые другие значения — disable
+provider_options[&quot;SPACEMIT_EP_USE_GLOBAL_INTRA_THREAD&quot;] = &quot;1&quot;;
+
+SessionOptionsSpaceMITEnvInit(session_options, provider_options);
+Ort::Session session0(env, net_param_path, session_options);
+
+SessionOptionsSpaceMITEnvInit(session_options, provider_options);
+Ort::Session session1(env, net_param_path, session_options);
+
+// session0 и session1 будут совместно использовать ресурсы потоков EP;
+// убедитесь, что session0 и session1 не выполняют инференс одновременно
+</code></pre>
+<h4 id="spacemit-ep-dump-subgraphs"><code>SPACEMIT_EP_DUMP_SUBGRAPHS</code></h4>
+<blockquote>
+<ul>
+<li>Экспортирует подграфы, скомпилированные EP, в каталоге запуска с префиксом <code>SpaceMITExecutionProvider_SpineSubgraph_</code></li>
+<li>&#x2139;&#xfe0f;Полезно, чтобы проверить, на сколько подграфов EP разделил модель. Чем меньше подграфов, тем лучше</li>
+<li>&#x2139;&#xfe0f;Поддерживается настройка через переменные окружения</li>
+</ul>
+</blockquote>
+<pre><code class="language-C++">std::unordered_map&lt;std::string, std::string&gt; provider_options;
+// &quot;1&quot; означает enable, любые другие значения — disable
+provider_options[&quot;SPACEMIT_EP_DUMP_SUBGRAPHS&quot;] = &quot;1&quot;;
+</code></pre>
+<h4 id="spacemit-ep-debug-profile"><code>SPACEMIT_EP_DEBUG_PROFILE</code></h4>
+<blockquote>
+<ul>
+<li>Экспортирует профиль выполнения EP в JSON с заданным префиксом. Профиль независим от профиля ONNXRuntime</li>
+<li>JSON можно открыть в Google Trace или <a href="https://www.ui.perfetto.dev/">Perfetto</a> и посмотреть время выполнения каждого оператора</li>
+<li>Поддерживается настройка через переменные окружения</li>
+</ul>
+</blockquote>
+<pre><code class="language-C++">std::unordered_map&lt;std::string, std::string&gt; provider_options;
+// Это значение задает префикс для JSON-файлов профиля
+provider_options[&quot;SPACEMIT_EP_DEBUG_PROFILE&quot;] = &quot;profile_&quot;;
+</code></pre>
+<h4 id="spacemit-ep-dump-tensors"><code>SPACEMIT_EP_DUMP_TENSORS</code></h4>
+<blockquote>
+<ul>
+<li>Выгружает промежуточные результаты EP во время выполнения в каталог с заданным именем</li>
+<li>&#x2139;&#xfe0f;Поддерживается настройка через переменные окружения</li>
+</ul>
+</blockquote>
+<pre><code class="language-C++">std::unordered_map&lt;std::string, std::string&gt; provider_options;
+// Это значение задает каталог для сохранения выгруженных тензоров (.npy);
+// если каталога нет, EP создаст его автоматически
+provider_options[&quot;SPACEMIT_EP_DUMP_TENSORS&quot;] = &quot;dump&quot;;
+</code></pre>
+<h4 id="spacemit-ep-disable-op-type-filter"><code>SPACEMIT_EP_DISABLE_OP_TYPE_FILTER</code></h4>
+<blockquote>
+<ul>
+<li>Запрещает EP выполнять инференс для некоторых типов операторов</li>
+<li>&#x2139;&#xfe0f;Поддерживается настройка через переменные окружения</li>
+</ul>
+</blockquote>
+<pre><code class="language-C++">std::unordered_map&lt;std::string, std::string&gt; provider_options;
+// Разделяйте типы операторов символом ;
+provider_options[&quot;SPACEMIT_EP_DISABLE_OP_TYPE_FILTER&quot;] = &quot;Conv;Gemm&quot;;
+</code></pre>
+<h4 id="spacemit-ep-disable-op-name-filter"><code>SPACEMIT_EP_DISABLE_OP_NAME_FILTER</code></h4>
+<blockquote>
+<ul>
+<li>Запрещает EP выполнять инференс для операторов с заданными именами</li>
+<li>&#x2139;&#xfe0f;Поддерживается настройка через переменные окружения</li>
+</ul>
+</blockquote>
+<pre><code class="language-C++">std::unordered_map&lt;std::string, std::string&gt; provider_options;
+// Разделяйте имена операторов символом ;
+provider_options[&quot;SPACEMIT_EP_DISABLE_OP_TYPE_FILTER&quot;] = &quot;Conv1;Conv2&quot;;
+</code></pre>
+<h4 id="spacemit-ep-disable-float16-epilogue"><code>SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE</code></h4>
+<blockquote>
+<ul>
+<li>Отключает FP16-эпилог, например оптимизации FP16 scaling для Conv/Gemm в режиме квантования</li>
+<li>&#x2139;&#xfe0f;Поддерживается настройка через переменные окружения</li>
+</ul>
+</blockquote>
+<pre><code class="language-C++">std::unordered_map&lt;std::string, std::string&gt; provider_options;
+// &quot;1&quot; означает отключение, другие значения — недействительны
+provider_options[&quot;SPACEMIT_EP_DISABLE_FLOAT16_EPILOGUE&quot;] = &quot;1&quot;;
+</code></pre>
+<h2 id="описание-демо">Описание демо</h2>
+<h3 id="onnxruntime-perf-test">onnxruntime_perf_test</h3>
+<ul>
+<li>Shell</li>
+</ul>
+<pre><code class="language-bash"># cd spacemit-ort.riscv64.x.x.x
+export LD_LIBRARY_PATH=./lib
+# запуск
+./bin/onnxruntime_perf_test resnet50.q.onnx -e spacemit -r 1 -x 1 -c 1 -S 1 -I
+</code></pre>
+<ul>
+<li>Описание часто используемых параметров:<blockquote>
+<ul>
+<li>-e: указать используемый бэкенд, например <code>-e spacemit</code></li>
+<li>-r: число прогонов, например <code>-r 10</code></li>
+<li>-x: число потоков</li>
+<li>-c: количество одновременно запускаемых сессий инференса</li>
+<li>-S: задать seed для воспроизводимых входных данных, по умолчанию -1</li>
+<li>-I: включить предвыделение и привязку входных тензоров</li>
+<li>-s: показать статистику</li>
+<li>-p: сформировать лог выполнения</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h3 id="onnx-test-runner">onnx_test_runner</h3>
+<p>onnx_test_runner используется для валидации ONNX-моделей и проверки корректности и согласованности результатов на разных бэкендах выполнения (например, SpaceMITExecutionProvider). Основные цели:</p>
+<blockquote>
+<ul>
+<li>Проверка корректности модели: убедиться, что модель ONNX, экспортированная из обучающего фреймворка (например, PyTorch или TensorFlow), дает результаты в ONNX Runtime, совпадающие с исходным фреймворком.</li>
+<li>Проверка поддержки операторов: определить, поддерживаются ли операторы модели выбранным провайдером выполнения (например, CPU, GPU, NPU).</li>
+<li>Проверка кросс-платформенной согласованности: гарантировать сопоставимые результаты запуска одной и той же модели на разных аппаратных бэкендах (например, CPU, ArmNN, ACL, CUDA).</li>
+<li>Вспомогательная оценка производительности: хотя основной фокус — корректность, время выполнения дает базовый ориентир по производительности (для точного бенчмаркинга используйте <code>onnxruntime_perf_test</code>).</li>
+</ul>
+</blockquote>
+<ul>
+<li>Shell</li>
+</ul>
+<pre><code class="language-bash">onnx_test_runner [опции] &lt;каталог_тестовых_данных&gt;
+
+# добавьте переменную окружения
+export LD_LIBRARY_PATH=PATH_TO_YOUR_LIB
+# запуск
+./onnx_test_runner {.....}/resnet50.q-imagenet -j 1 -X 4 -e spacemit
+</code></pre>
+<ul>
+<li>Структура каталога тестовых данных</li>
+</ul>
+<pre><code>mobilenetv2
+├── mobilenetv2.onnx      # файл модели ONNX
+└── test_data0            # каталог тестовых данных
+    ├── input0.pb         # входной тензор (формат protocol buffer)
+    └── output_0.pb       # ожидаемый выходной тензор
+└── test_data1
+    ├── input0.pb
+    └── output_0.pb
+</code></pre>
+<ul>
+<li>Описание часто используемых параметров<blockquote>
+<ul>
+<li>-e указывает EP — это один из ключевых параметров выбора аппаратного бэкенда.</li>
+<li>-X число параллельных тестовых потоков.</li>
+<li>-c число параллельных сессий.</li>
+<li>-r число повторов теста (полезно для проверки стабильности).</li>
+<li>-v выводит более подробную информацию.</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="описание-операторов-ep"><a href="./onnxruntime_ep_ops.html">Описание операторов EP</a></h2>
+<blockquote>
+<p>&#x2139;&#xfe0f;Операторы, поддерживаемые EP, могут быть сгруппированы в подграфы и выполнены EP-бэкендом; неподдерживаемые операторы выполняются через CPUProvider ONNXRuntime
+&#x2139;&#xfe0f;Список поддерживаемых операторов постоянно расширяется; при наличии узких мест в моделях можно направлять запросы на поддержку</p>
+</blockquote>
+<h2 id="данные-производительности-моделей"><a href="./modelzoo.html">Данные производительности моделей</a></h2>
+<blockquote>
+<p>Данные производительности получены при инференсе через ONNXRuntime + SpaceMITExecutionProvider с использованием onnxruntime_perf_test</p>
+</blockquote>
+<h2 id="faq"><a href="./onnxruntime_ep_faq.html">FAQ</a></h2>
+<blockquote>
+<p>Вопросы можно задавать в <a href="https://forum.spacemit.com/">сообществе разработчиков SpacemiT</a>; мы постараемся ответить как можно быстрее</p>
+</blockquote>
+  </main>
+</body>
+</html>

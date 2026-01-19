@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ускоренные операторы ONNXRuntime EP</title>
+  <link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="home-link" href="../../index.html">Документация ИИ SpacemiT</a>
+    </div>
+  </header>
+  <main class="container content">
+<h1 id="ускоренные-операторы-onnxruntime-ep">Ускоренные операторы ONNXRuntime EP</h1>
+<blockquote>
+<ul>
+<li>В этом разделе перечислены ускоренные операторы, поддерживаемые SpaceMITExecutionProvider, и их спецификации</li>
+<li><a href="https://onnx.ai/onnx/operators/index.html">Справочник ONNX-OP</a></li>
+<li><a href="https://github.com/microsoft/onnxruntime/blob/main/docs/ContribOperators.md">Справочник ONNX-Contrib-OP</a></li>
+</ul>
+</blockquote>
+<ul>
+<li><a href="#dense">Dense</a></li>
+<li><a href="#conv"><strong>Conv</strong></a></li>
+<li><a href="#convtranspose"><strong>ConvTranspose</strong></a></li>
+<li><a href="#gemm"><strong>Gemm</strong></a></li>
+<li><a href="#matmul"><strong>MatMul</strong></a></li>
+<li><a href="#qdq">QDQ</a></li>
+<li><a href="#dynamicquantizelinear"><strong>DynamicQuantizeLinear</strong></a></li>
+<li><a href="#quantizelinear"><strong>QuantizeLinear</strong></a></li>
+<li><a href="#dequantizelinear"><strong>DequantizeLinear</strong></a></li>
+<li><a href="#pool">Pool</a></li>
+<li><a href="#averagepool"><strong>AveragePool</strong></a></li>
+<li><a href="#globalaveragepool"><strong>GlobalAveragePool</strong></a></li>
+<li><a href="#maxpool"><strong>MaxPool</strong></a></li>
+<li><a href="#globalmaxpool"><strong>GlobalMaxPool</strong></a></li>
+<li><a href="#reduce">Reduce</a></li>
+<li><a href="#reducemean"><strong>ReduceMean</strong></a></li>
+<li><a href="#reducemax"><strong>ReduceMax</strong></a></li>
+<li><a href="#math">Math</a></li>
+<li><a href="#add"><strong>Add</strong></a></li>
+<li><a href="#sub"><strong>Sub</strong></a></li>
+<li><a href="#mul"><strong>Mul</strong></a></li>
+<li><a href="#div"><strong>Div</strong></a></li>
+<li><a href="#pow"><strong>Pow</strong></a></li>
+<li><a href="#sqrt"><strong>Sqrt</strong></a></li>
+<li><a href="#abs"><strong>Abs</strong></a></li>
+<li><a href="#reciprocal"><strong>Reciprocal</strong></a></li>
+<li><a href="#activation">Activation</a></li>
+<li><a href="#sigmoid"><strong>Sigmoid</strong></a></li>
+<li><a href="#swish"><strong>Swish</strong></a></li>
+<li><a href="#hardsigmoid"><strong>HardSigmoid</strong></a></li>
+<li><a href="#hardswish"><strong>HardSwish</strong></a></li>
+<li><a href="#tanh"><strong>Tanh</strong></a></li>
+<li><a href="#leakyrelu"><strong>LeakyRelu</strong></a></li>
+<li><a href="#clip"><strong>Clip</strong></a></li>
+<li><a href="#relu"><strong>Relu</strong></a></li>
+<li><a href="#elu"><strong>Elu</strong></a></li>
+<li><a href="#gelu"><strong>Gelu</strong></a></li>
+<li><a href="#erf"><strong>Erf</strong></a></li>
+<li><a href="#softmax"><strong>Softmax</strong></a></li>
+<li><a href="#tensor">Tensor</a></li>
+<li><a href="#cast"><strong>Cast</strong></a></li>
+<li><a href="#concat"><strong>Concat</strong></a></li>
+<li><a href="#split"><strong>Split</strong></a></li>
+<li><a href="#transpose"><strong>Transpose</strong></a></li>
+<li><a href="#unsqueeze"><strong>Unsqueeze</strong></a></li>
+<li><a href="#squeeze"><strong>Squeeze</strong></a></li>
+<li><a href="#reshape"><strong>Reshape</strong></a></li>
+<li><a href="#flatten"><strong>Flatten</strong></a></li>
+<li><a href="#gather"><strong>Gather</strong></a></li>
+<li><a href="#resize"><strong>Resize</strong></a></li>
+<li><a href="#norm">Norm</a></li>
+<li><a href="#layernormalization"><strong>LayerNormalization</strong></a></li>
+<li><a href="#batchnormalization"><strong>BatchNormalization</strong></a></li>
+</ul>
+<h2 id="dense">Dense</h2>
+<h3 id="conv"><strong>Conv</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 11</li>
+<li>Атрибуты: W должен быть константой</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+<li>Примечания: поддерживается формат квантования QDQ; W — симметричный per-channel, X — асимметричный per-tensor</li>
+</ul>
+</blockquote>
+<h3 id="convtranspose"><strong>ConvTranspose</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 11</li>
+<li>Атрибуты: W должен быть константой</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+<li>Примечания: поддерживается формат квантования QDQ; W — симметричный per-channel, X — асимметричный per-tensor</li>
+</ul>
+</blockquote>
+<h3 id="gemm"><strong>Gemm</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты: transA == 0</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+<li>Примечания: поддерживается формат квантования QDQ; A — асимметричный per-tensor, B — симметричный per-channel; если B не является константой, он должен быть асимметричным per-tensor</li>
+</ul>
+</blockquote>
+<h3 id="matmul"><strong>MatMul</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+<li>Примечания: поддерживается формат квантования QDQ; A — асимметричный per-tensor, B — симметричный per-channel; если B не является константой, он должен быть асимметричным per-tensor</li>
+</ul>
+</blockquote>
+<h2 id="qdq">QDQ</h2>
+<h3 id="dynamicquantizelinear"><strong>DynamicQuantizeLinear</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 11</li>
+<li>Атрибуты: поддерживается только per-tensor</li>
+<li>Тип: T1: tensor(float)</li>
+<li>Тип: T2: tensor(int8)</li>
+</ul>
+</blockquote>
+<h3 id="quantizelinear"><strong>QuantizeLinear</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 19</li>
+<li>Атрибуты: поддерживается per-tensor и per-channel</li>
+<li>Тип: T1: tensor(float)</li>
+<li>Тип: T2: tensor(int8) | tensor(int16)</li>
+</ul>
+</blockquote>
+<h3 id="dequantizelinear"><strong>DequantizeLinear</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 19</li>
+<li>Атрибуты: поддерживается per-tensor и per-channel</li>
+<li>Тип: T1: tensor(int8) | tensor(int16) | tensor(int32)</li>
+<li>Тип: T2: tensor(float)</li>
+</ul>
+</blockquote>
+<h2 id="pool">Pool</h2>
+<h3 id="averagepool"><strong>AveragePool</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 22</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="globalaveragepool"><strong>GlobalAveragePool</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 1</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="maxpool"><strong>MaxPool</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 12</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(int8) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="globalmaxpool"><strong>GlobalMaxPool</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 1</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(int8) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h2 id="reduce">Reduce</h2>
+<h3 id="reducemean"><strong>ReduceMean</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 18</li>
+<li>Атрибуты: axes должен быть непрерывным постоянным диапазоном, например [1,2]</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="reducemax"><strong>ReduceMax</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 20</li>
+<li>Атрибуты: axes должен быть непрерывным постоянным диапазоном, например [1,2]</li>
+<li>Тип: T: tensor(float) | tensor(int8) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h2 id="math">Math</h2>
+<h3 id="add"><strong>Add</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="sub"><strong>Sub</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="mul"><strong>Mul</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="div"><strong>Div</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="pow"><strong>Pow</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="sqrt"><strong>Sqrt</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="abs"><strong>Abs</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="reciprocal"><strong>Reciprocal</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h2 id="activation">Activation</h2>
+<h3 id="sigmoid"><strong>Sigmoid</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="swish"><strong>Swish</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 24</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="hardsigmoid"><strong>HardSigmoid</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 22</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="hardswish"><strong>HardSwish</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 22</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="tanh"><strong>Tanh</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="leakyrelu"><strong>LeakyRelu</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 16</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="clip"><strong>Clip</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="relu"><strong>Relu</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 14</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="elu"><strong>Elu</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 22</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="gelu"><strong>Gelu</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 20</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="erf"><strong>Erf</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="softmax"><strong>Softmax</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты:</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h2 id="tensor">Tensor</h2>
+<h3 id="cast"><strong>Cast</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 24</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="concat"><strong>Concat</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="split"><strong>Split</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 18</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="transpose"><strong>Transpose</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 24</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="unsqueeze"><strong>Unsqueeze</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 24</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="squeeze"><strong>Squeeze</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 24</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="reshape"><strong>Reshape</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 24</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="flatten"><strong>Flatten</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 24</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="gather"><strong>Gather</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 13</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h3 id="resize"><strong>Resize</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 19</li>
+<li>Атрибуты:</li>
+<li>Тип: All</li>
+</ul>
+</blockquote>
+<h2 id="norm">Norm</h2>
+<h3 id="layernormalization"><strong>LayerNormalization</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 17</li>
+<li>Атрибуты: Scale и B должны быть константами</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+<h3 id="batchnormalization"><strong>BatchNormalization</strong></h3>
+<blockquote>
+<ul>
+<li>Домен: ai.onnx</li>
+<li>Opset: 15</li>
+<li>Атрибуты: Scale, B, input_mean и input_var должны быть константами</li>
+<li>Тип: T: tensor(float) | tensor(float16)</li>
+</ul>
+</blockquote>
+  </main>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4.2 Набор инструкций матричного расширения</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="home-link" href="../index.html">Документация ИИ SpacemiT</a>
+    </div>
+  </header>
+  <main class="container content">
+<h1 id="42-набор-инструкций-матричного-расширения">4.2 Набор инструкций матричного расширения</h1>
+<ul>
+<li><a href="#421-обзор-набора-инструкций">4.2.1 Обзор набора инструкций</a></li>
+<li><a href="#422-набор-инструкций-spacemit">4.2.2 Набор инструкций SpacemiT</a></li>
+<li><a href="#423-базовое-использование">4.2.3 Базовое использование</a></li>
+</ul>
+<h2 id="421-обзор-набора-инструкций">4.2.1 Обзор набора инструкций</h2>
+<p>Инструкции матричного расширения в первую очередь предназначены для ключевой операции в ИИ — умножения матриц. Общая форма умножения матриц:</p>
+<p>C+ = A x B</p>
+<p>где C — выходная матрица, A и B — входные матрицы. В зависимости от того, какие регистры используются для входных и выходных матриц, сообщество <strong><em>RISC-V</em></strong> разделяет матричное расширение на три подхода, как показано ниже: <img alt="Сравнение трех вариантов инструкций" src="./images/matrix_inst.jpg" /></p>
+<ul>
+<li>Подход IME: входные и выходные матрицы используют vector-регистры. Подробнее: <a href="https://lists.riscv.org/g/tech-integrated-matrix-extension">IME subgroup</a>.</li>
+<li>Подход VME: входные матрицы используют vector-регистры, выходные — отдельные расширенные регистры. Подробнее: <a href="https://lists.riscv.org/g/tech-vme">VME subgroup</a>.</li>
+<li>Подход AME: входные и выходные матрицы используют отдельные специализированные регистры. Подробнее: <a href="https://lists.riscv.org/g/tech-attached-matrix-extension">AME subgroup</a>.</li>
+</ul>
+<h2 id="422-набор-инструкций-spacemit">4.2.2 Набор инструкций SpacemiT</h2>
+<p>Собственный набор инструкций матричного расширения SpacemiT основан на IME; <a href="https://github.com/spacemit-com/riscv-ime-extension-spec">подробности здесь</a>. В ядре K1 (vlen=256) форма матричного вычислительного блока такая:</p>
+<p>4 x 8 x 4</p>
+<p>Теоретическая производительность одного матричного блока:</p>
+<p>2 x 4 x 8 x 4 x 2Ghz = 0.5TOPS</p>
+<h2 id="423-базовое-использование">4.2.3 Базовое использование</h2>
+<p>Расширенный набор инструкций SpacemiT, основанный на IME, в целом следует программной модели стандартного vector-набора RISC-V. Использование стандартного vector-набора см. <a href="">здесь</a>.
+Использование IME-инструкций см. в <a href="https://github.com/spacemit-com/riscv-ime-extension-spec/tree/master/example">репозитории примеров</a></p>
+  </main>
+</body>
+</html>
